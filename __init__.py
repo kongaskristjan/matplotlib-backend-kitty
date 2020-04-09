@@ -28,18 +28,17 @@ class FigureManagerICat(FigureManagerBase):
 
         # account for post-display prompt scrolling
         px[1] -= int(1*(px[1]/rows))
-        rows = int(tput(['lines'])) - 1
 
         # resize figure to terminal size
-        dpi = self.canvas.figure.dpi
+        dpi = self.canvas.figure.dpi * 1.7
         self.canvas.figure.set_size_inches(tuple(map(lambda x: (x / dpi), px)))
 
         with BytesIO() as buf:
             self.canvas.figure.savefig(buf, format='png',
-                                       facecolor='#ffffff7f', transparent=True)
+                                       facecolor='#e7e7e7', transparent=False, bbox_inches='tight')
 
-            run(icat + ['--clear', '--place', f'{cols}x{rows}@0x0'],
-                input=buf.getbuffer())
+            cmd = icat + ['--align', 'left']
+            run(cmd, input=buf.getbuffer())
 
 
 @_Backend.export
